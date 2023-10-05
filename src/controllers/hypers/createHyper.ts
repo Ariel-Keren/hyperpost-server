@@ -26,7 +26,7 @@ const createHyper = async (req: Request, res: Response) => {
     { $push: { hypers: { name, createdBy, createdAt: now } } }
   );
 
-  res.sendStatus(200);
+  res.status(201).json({ createdAt: now });
 };
 
 export default createHyper;
