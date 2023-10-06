@@ -26,7 +26,12 @@ const joinHyper = async (req: Request, res: Response) => {
     }
   );
 
-  res.sendStatus(200);
+  res
+    .status(200)
+    .json({
+      createdBy: targetHyper.createdBy,
+      createdAt: targetHyper.createdAt,
+    });
 };
 
 export default joinHyper;
