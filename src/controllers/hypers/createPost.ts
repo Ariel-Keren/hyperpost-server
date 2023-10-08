@@ -31,7 +31,7 @@ const createPost = async (req: Request, res: Response) => {
     }
   );
 
-  res.sendStatus(201);
+  res.status(201).json({createdAt: now});
 };
 
 export default createPost;
