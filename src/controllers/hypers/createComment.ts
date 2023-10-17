@@ -23,7 +23,7 @@ const createComment = async (req: Request, res: Response) => {
   targetHyper.posts[Number(postIndex)].comments.push(newComment);
   await targetHyper.save();
 
-  res.sendStatus(200);
+  res.status(201).json({createdAt: now})
 };
 
 export default createComment;
