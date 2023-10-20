@@ -16,7 +16,7 @@ router.post("/", createHyper);
 router.get("/:hyper", getHyper);
 router.patch("/:hyper", changeDescription);
 router.post("/:hyper/posts", createPost);
-router.patch(":hyper/posts/:postIndex", changePost);
+router.patch("/:hyper/posts/:postIndex", changePost);
 router.post("/:hyper/posts/:postIndex/comments", createComment);
 router.patch("/:hyper/posts/:postIndex/comments/:commentIndex", changeComment);
 

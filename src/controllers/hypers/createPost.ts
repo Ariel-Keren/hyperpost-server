@@ -17,6 +17,7 @@ const createPost = async (req: Request, res: Response) => {
     title,
     text,
     createdBy,
+    favorites: 0,
     createdAt: now,
     updatedAt: now,
     comments: [],
@@ -31,7 +32,7 @@ const createPost = async (req: Request, res: Response) => {
     }
   );
 
-  res.status(201).json({createdAt: now});
+  res.status(201).json({ createdAt: now });
 };
 
 export default createPost;
