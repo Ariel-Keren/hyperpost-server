@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import Hyper from "../../models/Hyper";
+import { Types } from "mongoose";
 
 const createPost = async (req: Request, res: Response) => {
-  const { hyper } = req.params;
+  const { hyperName } = req.params;
   const { title, text, createdBy } = req.body;
 
   if (
@@ -13,6 +14,7 @@ const createPost = async (req: Request, res: Response) => {
     return res.sendStatus(400);
 
   const now = new Date();
+  const id = new Types.ObjectId();
   const newPost = {
     title,
     text,
@@ -21,10 +23,11 @@ const createPost = async (req: Request, res: Response) => {
     createdAt: now,
     updatedAt: now,
     comments: [],
+    _id: id,
   };
 
   await Hyper.updateOne(
-    { name: hyper },
+    { name: hyperName },
     {
       $push: {
         posts: newPost,
@@ -32,7 +35,7 @@ const createPost = async (req: Request, res: Response) => {
     }
   );
 
-  res.status(201).json({ createdAt: now });
+  res.status(201).json({ id: id.toString(), createdAt: now });
 };
 
 export default createPost;

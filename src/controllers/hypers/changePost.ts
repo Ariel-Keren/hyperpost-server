@@ -2,39 +2,40 @@ import { Request, Response } from "express";
 import Hyper from "../../models/Hyper";
 
 const changePost = async (req: Request, res: Response) => {
-  const { hyper, postIndex } = req.params;
+  const { hyperName, postID } = req.params;
   const { title, text, favoritesChange } = req.body;
 
   if (
     typeof title !== "string" ||
     typeof text !== "string" ||
     typeof favoritesChange !== "number" ||
-    ![-1, 0, 1].includes(favoritesChange) ||
-    !Number.isInteger(Number(postIndex)) ||
-    Number(postIndex) < 0
+    ![-1, 0, 1].includes(favoritesChange)
   )
     return res.sendStatus(400);
 
-  const targetHyper = await Hyper.findOne({ name: hyper });
+  const hyper = await Hyper.findOne({ name: hyperName });
 
-  if (!targetHyper) return res.sendStatus(404);
-  if (Number(postIndex) >= targetHyper.posts.length) return res.sendStatus(400);
+  if (!hyper) return res.sendStatus(404);
+
+  const postIndex = hyper.posts.findIndex(
+    (post) => post._id.toString() === postID
+  );
+
+  if (postIndex === -1) return res.sendStatus(404);
 
   if (
-    targetHyper.posts[Number(postIndex)].title !== title ||
-    targetHyper.posts[Number(postIndex)].text !== text
+    hyper.posts[postIndex].title !== title ||
+    hyper.posts[postIndex].text !== text
   ) {
     const now = new Date();
-    targetHyper.posts[Number(postIndex)].updatedAt = now;
+    hyper.posts[postIndex].updatedAt = now;
   }
-  targetHyper.posts[Number(postIndex)].title = title;
-  targetHyper.posts[Number(postIndex)].text = text;
-  targetHyper.posts[Number(postIndex)].favorites += favoritesChange;
-  await targetHyper.save();
+  hyper.posts[postIndex].title = title;
+  hyper.posts[postIndex].text = text;
+  hyper.posts[postIndex].favorites += favoritesChange;
+  await hyper.save();
 
-  res
-    .status(200)
-    .json({ updatedAt: targetHyper.posts[Number(postIndex)].updatedAt });
+  res.status(200).json({ updatedAt: hyper.posts[postIndex].updatedAt });
 };
 
 export default changePost;

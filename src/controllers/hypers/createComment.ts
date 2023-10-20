@@ -1,29 +1,37 @@
 import { Request, Response } from "express";
 import Hyper from "../../models/Hyper";
+import { Types } from "mongoose";
 
 const createComment = async (req: Request, res: Response) => {
-  const { hyper, postIndex } = req.params;
+  const { hyperName, postID } = req.params;
   const { text, createdBy } = req.body;
 
-  if (
-    typeof text !== "string" ||
-    typeof createdBy !== "string" ||
-    !Number.isInteger(Number(postIndex)) ||
-    Number(postIndex) < 0
-  )
+  if (typeof text !== "string" || typeof createdBy !== "string")
     return res.sendStatus(400);
 
-  const targetHyper = await Hyper.findOne({ name: hyper });
+  const hyper = await Hyper.findOne({ name: hyperName });
 
-  if (!targetHyper) return res.sendStatus(404);
-  if (Number(postIndex) >= targetHyper.posts.length) return res.sendStatus(400);
+  if (!hyper) return res.sendStatus(404);
+
+  const postIndex = hyper.posts.findIndex(
+    (post) => post._id.toString() === postID
+  );
+
+  if (postIndex === -1) return res.sendStatus(404);
 
   const now = new Date();
-  const newComment = { text, createdBy, createdAt: now, updatedAt: now };
-  targetHyper.posts[Number(postIndex)].comments.push(newComment);
-  await targetHyper.save();
+  const id = new Types.ObjectId();
+  const newComment = {
+    text,
+    createdBy,
+    createdAt: now,
+    updatedAt: now,
+    _id: id,
+  };
+  hyper.posts[postIndex].comments.push(newComment);
+  await hyper.save();
 
-  res.status(201).json({createdAt: now})
+  res.status(201).json({ id: id.toString(), createdAt: now });
 };
 
 export default createComment;

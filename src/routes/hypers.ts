@@ -13,11 +13,11 @@ const router = Router();
 router.use(verifyToken);
 
 router.post("/", createHyper);
-router.get("/:hyper", getHyper);
-router.patch("/:hyper", changeDescription);
-router.post("/:hyper/posts", createPost);
-router.patch("/:hyper/posts/:postIndex", changePost);
-router.post("/:hyper/posts/:postIndex/comments", createComment);
-router.patch("/:hyper/posts/:postIndex/comments/:commentIndex", changeComment);
+router.get("/:hyperName", getHyper);
+router.patch("/:hyperName", changeDescription);
+router.post("/:hyperName/posts", createPost);
+router.patch("/:hyperName/posts/:postID", changePost);
+router.post("/:hyperName/posts/:postID/comments", createComment);
+router.patch("/:hyperName/posts/:postID/comments/:commentID", changeComment);
 
 export default router;

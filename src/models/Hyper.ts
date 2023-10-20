@@ -5,6 +5,7 @@ const comment = {
   createdBy: { type: String, required: true },
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date, required: true },
+  _id: { type: Schema.Types.ObjectId, required: true },
 };
 
 const post = {
@@ -18,6 +19,7 @@ const post = {
     type: [comment],
     required: true,
   },
+  _id: { type: Schema.Types.ObjectId, required: true },
 };
 
 const hyperSchema = new Schema({
