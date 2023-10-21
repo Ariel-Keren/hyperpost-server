@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import Hyper from "../../models/Hyper";
+import User from "../../models/User";
 
 const changePost = async (req: Request, res: Response) => {
   const { hyperName, postID } = req.params;
-  const { title, text, favoritesChange } = req.body;
+  const { title, text, favoritesChange, username } = req.body;
 
   if (
     typeof title !== "string" ||
     typeof text !== "string" ||
     typeof favoritesChange !== "number" ||
+    typeof username !== "string" ||
     ![-1, 0, 1].includes(favoritesChange)
   )
     return res.sendStatus(400);
@@ -29,7 +31,30 @@ const changePost = async (req: Request, res: Response) => {
   ) {
     const now = new Date();
     hyper.posts[postIndex].updatedAt = now;
+  } else if (favoritesChange) {
+    const user = await User.findOne({ username });
+
+    if (!user) return res.sendStatus(404);
+
+    const hyperIndex = user.hypers.findIndex(
+      (currentHyper) => currentHyper.name === hyperName
+    );
+    const favoriteIndex = user.hypers[hyperIndex].favorites.findIndex(
+      (favorite) =>
+        favorite.toString() === hyper.posts[postIndex]._id.toString()
+    );
+
+    if (favoritesChange === 1) {
+      if (favoriteIndex === -1)
+        user.hypers[hyperIndex].favorites.push(hyper.posts[postIndex]._id);
+    } else {
+      if (favoriteIndex !== -1)
+        user.hypers[hyperIndex].favorites.splice(favoriteIndex, 1);
+    }
+
+    await user.save();
   }
+
   hyper.posts[postIndex].title = title;
   hyper.posts[postIndex].text = text;
   hyper.posts[postIndex].favorites += favoritesChange;

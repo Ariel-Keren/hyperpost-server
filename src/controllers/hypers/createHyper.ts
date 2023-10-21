@@ -21,9 +21,10 @@ const createHyper = async (req: Request, res: Response) => {
     updatedAt: now,
     posts: [],
   });
+  const newHyper = { name, createdBy, createdAt: now, favorites: [] };
   await User.updateOne(
     { username: createdBy },
-    { $push: { hypers: { name, createdBy, createdAt: now } } }
+    { $push: { hypers: newHyper } }
   );
 
   res.status(201).json({ createdAt: now });

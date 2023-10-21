@@ -16,6 +16,7 @@ const joinHyper = async (req: Request, res: Response) => {
     name: hyper,
     createdBy: targetHyper.createdBy,
     createdAt: targetHyper.createdAt,
+    favorites: [],
   };
   await User.updateOne(
     { username },
@@ -26,12 +27,10 @@ const joinHyper = async (req: Request, res: Response) => {
     }
   );
 
-  res
-    .status(200)
-    .json({
-      createdBy: targetHyper.createdBy,
-      createdAt: targetHyper.createdAt,
-    });
+  res.status(200).json({
+    createdBy: targetHyper.createdBy,
+    createdAt: targetHyper.createdAt,
+  });
 };
 
 export default joinHyper;
