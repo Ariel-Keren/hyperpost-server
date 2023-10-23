@@ -17,6 +17,8 @@ const joinHyper = async (req: Request, res: Response) => {
     createdBy: targetHyper.createdBy,
     createdAt: targetHyper.createdAt,
     favorites: [],
+    likes: [],
+    dislikes: [],
   };
   await User.updateOne(
     { username },

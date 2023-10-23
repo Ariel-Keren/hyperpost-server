@@ -30,6 +30,8 @@ const changePost = async (req: Request, res: Response) => {
     hyper.posts[postIndex].text !== text
   ) {
     const now = new Date();
+    hyper.posts[postIndex].title = title;
+    hyper.posts[postIndex].text = text;
     hyper.posts[postIndex].updatedAt = now;
   } else if (favoritesChange) {
     const user = await User.findOne({ username });
@@ -39,25 +41,26 @@ const changePost = async (req: Request, res: Response) => {
     const hyperIndex = user.hypers.findIndex(
       (currentHyper) => currentHyper.name === hyperName
     );
+
+    if (hyperIndex === -1) return res.sendStatus(404);
+
     const favoriteIndex = user.hypers[hyperIndex].favorites.findIndex(
       (favorite) =>
         favorite.toString() === hyper.posts[postIndex]._id.toString()
     );
 
     if (favoritesChange === 1) {
-      if (favoriteIndex === -1)
-        user.hypers[hyperIndex].favorites.push(hyper.posts[postIndex]._id);
+      if (favoriteIndex !== -1) return res.sendStatus(400);
+      user.hypers[hyperIndex].favorites.push(hyper.posts[postIndex]._id);
     } else {
-      if (favoriteIndex !== -1)
-        user.hypers[hyperIndex].favorites.splice(favoriteIndex, 1);
+      if (favoriteIndex === -1) return res.sendStatus(404);
+      user.hypers[hyperIndex].favorites.splice(favoriteIndex, 1);
     }
 
     await user.save();
+    hyper.posts[postIndex].favorites += favoritesChange;
   }
 
-  hyper.posts[postIndex].title = title;
-  hyper.posts[postIndex].text = text;
-  hyper.posts[postIndex].favorites += favoritesChange;
   await hyper.save();
 
   res.status(200).json({ updatedAt: hyper.posts[postIndex].updatedAt });

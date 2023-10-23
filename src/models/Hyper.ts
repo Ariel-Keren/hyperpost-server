@@ -3,6 +3,8 @@ import { Schema, model } from "mongoose";
 const comment = {
   text: { type: String, required: true },
   createdBy: { type: String, required: true },
+  likes: { type: Number, required: true },
+  dislikes: { type: Number, required: true },
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date, required: true },
   _id: { type: Schema.Types.ObjectId, required: true },

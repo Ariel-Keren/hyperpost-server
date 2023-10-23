@@ -24,6 +24,8 @@ const createComment = async (req: Request, res: Response) => {
   const newComment = {
     text,
     createdBy,
+    likes: 0,
+    dislikes: 0,
     createdAt: now,
     updatedAt: now,
     _id: id,
